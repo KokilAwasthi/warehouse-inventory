@@ -1,0 +1,13 @@
+{
+    "xsappname": "warehouse-inventory",
+    "tenant-mode": "dedicated",
+    "description": "Security profile of the Warehouse Inventory app",
+    "scopes": [],
+    "role-templates": [],
+    "oauth2-configuration": {
+        "redirect-uris": [
+            "https://*.hana.ondemand.com/**",
+            "https://*.applicationstudio.cloud.sap/**"
+        ]
+    }
+}

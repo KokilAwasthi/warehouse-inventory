@@ -1,0 +1,15 @@
+{
+  "name": "warehouse-inventory-router",
+  "version": "1.0.0",
+  "description": "Standalone application router for the Warehouse Inventory app",
+  "private": true,
+  "dependencies": {
+    "@sap/approuter": "^23"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  }
+}

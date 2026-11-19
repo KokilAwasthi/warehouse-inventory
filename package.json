@@ -1,0 +1,34 @@
+{
+  "name": "warehouse-inventory",
+  "version": "1.0.0",
+  "description": "Warehouse Inventory - CAP backend with SAP HANA Cloud and a SAPUI5 Fiori app",
+  "private": true,
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
+    "mbt": "^1.2.29"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "build": "mbt build",
+    "deploy": "cf deploy mta_archives/warehouse-inventory_1.0.0.mtar"
+  },
+  "cds": {
+    "requires": {
+      "[development]": {
+        "auth": "dummy"
+      },
+      "[production]": {
+        "db": "hana",
+        "auth": "xsuaa"
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+<mvc:View
+    controllerName="com.mycompany.fioriapp.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="mainPage" title="{i18n>mainTitle}" titleAlignment="Center">
+        <headerContent>
+            <Image
+                id="sapLogo"
+                src="{view>/logoUrl}"
+                alt="SAP"
+                height="1.625rem"
+                densityAware="false" />
+        </headerContent>
+        <content>
+            <Table
+                id="productsTable"
+                items="{
+                    path: '/Products',
+                    parameters: { $count: true },
+                    sorter: { path: 'Name' }
+                }"
+                noDataText="{i18n>noData}"
+                growing="true"
+                growingThreshold="20"
+                updateFinished=".onUpdateFinished">
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title id="tableTitle" text="{i18n>mainTitle}" level="H2" />
+                        <ToolbarSpacer />
+                        <SearchField
+                            width="16rem"
+                            placeholder="{i18n>searchPlaceholder}"
+                            liveChange=".onSearch" />
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column><Text text="{i18n>colProduct}" /></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>colCategory}" /></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>colStock}" /></Column>
+                    <Column hAlign="End"><Text text="{i18n>colPrice}" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem type="Navigation" press=".onItemPress">
+                        <cells>
+                            <ObjectIdentifier title="{Name}" text="{ProductID}" />
+                            <Text text="{Category}" />
+                            <ObjectStatus
+                                text="{ path: 'Stock', formatter: '.formatter.stockText' }"
+                                state="{ path: 'Stock', formatter: '.formatter.stockState' }" />
+                            <ObjectNumber
+                                number="{
+                                    parts: ['Price', 'Currency'],
+                                    type: 'sap.ui.model.type.Currency',
+                                    formatOptions: { showMeasure: false }
+                                }"
+                                unit="{Currency}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

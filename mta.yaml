@@ -1,0 +1,180 @@
+_schema-version: "3.2"
+ID: warehouse-inventory
+description: Warehouse Inventory - CAP service on SAP HANA Cloud with a SAPUI5 Fiori app
+version: 1.0.0
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install
+        - npx cds build --production
+
+modules:
+  # ---------------------------------------------------------------- CAP OData service
+  - name: warehouse-inventory-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 1024M
+      readiness-health-check-type: http
+      readiness-health-check-http-endpoint: /health
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: warehouse-inventory-db
+      - name: warehouse-inventory-uaa
+
+  # ---------------------------------------------------------------- HANA HDI deployer (tables + products data)
+  - name: warehouse-inventory-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 1024M
+    requires:
+      - name: warehouse-inventory-db
+
+  # ---------------------------------------------------------------- Standalone approuter (login + entry URL)
+  # Serves the app from the HTML5 repo at /commycompanyfioriapp/ and applies the app's own xs-app.json routes.
+  - name: warehouse-inventory
+    type: approuter.nodejs
+    path: app/router
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+      keep-existing-routes: true
+    requires:
+      - name: warehouse-inventory-uaa
+      - name: warehouse-inventory-destination-service
+      - name: warehouse-inventory-html5-runtime
+
+  # ---------------------------------------------------------------- Fiori app build
+  - name: commycompanyfioriapp
+    type: html5
+    path: app/fioriapp
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+
+  # ---------------------------------------------------------------- Upload app to HTML5 Application Repository
+  - name: warehouse-inventory-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: warehouse-inventory-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - commycompanyfioriapp.zip
+          name: commycompanyfioriapp
+          target-path: resources/
+
+  # ---------------------------------------------------------------- Managed approuter destinations
+  - name: warehouse-inventory-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: warehouse-inventory-destination-service
+        parameters:
+          content-target: true
+      - name: warehouse-inventory-repo-host
+        parameters:
+          service-key:
+            name: warehouse-inventory-repo-host-key
+      - name: warehouse-inventory-uaa
+        parameters:
+          service-key:
+            name: warehouse-inventory-uaa-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: warehouse-inventory_html_repo_host
+              ServiceInstanceName: warehouse-inventory-html5-srv
+              ServiceKeyName: warehouse-inventory-repo-host-key
+              sap.cloud.service: comcompanyfioriapp
+            - Authentication: OAuth2UserTokenExchange
+              Name: warehouse-inventory_uaa
+              ServiceInstanceName: warehouse-inventory-xsuaa-srv
+              ServiceKeyName: warehouse-inventory-uaa-key
+              sap.cloud.service: comcompanyfioriapp
+          existing_destinations_policy: update
+    build-parameters:
+      no-source: true
+
+resources:
+  # HDI container inside your SAP HANA Cloud instance
+  - name: warehouse-inventory-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  - name: warehouse-inventory-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: warehouse-inventory-xsuaa-srv
+      service-plan: application
+
+  - name: warehouse-inventory-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: warehouse-inventory-html5-srv
+      service-plan: app-host
+
+  # HTML5 repo runtime: lets the standalone approuter serve apps from the repository
+  - name: warehouse-inventory-html5-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: warehouse-inventory-html5-runtime
+      service-plan: app-runtime
+
+  - name: warehouse-inventory-destination-service
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: srv-api
+    parameters:
+      service: destination
+      service-name: warehouse-inventory-destination-service
+      service-plan: lite
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              - Name: ui5
+                Type: HTTP
+                URL: https://ui5.sap.com
+                ProxyType: Internet
+                Authentication: NoAuthentication
+              - Name: warehouse-inventory-srv-api
+                Type: HTTP
+                URL: ~{srv-api/srv-url}
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+                HTML5.ForwardAuthToken: true

@@ -1,0 +1,20 @@
+specVersion: "4.0"
+metadata:
+  name: com.mycompany.fioriapp
+type: application
+framework:
+  name: SAPUI5
+  version: "1.120.0"
+  libraries:
+    - name: sap.m
+    - name: sap.ui.core
+    - name: sap.ui.layout
+    - name: themelib_sap_horizon
+server:
+  customMiddleware:
+    # Local development: forward OData calls to the CAP server (npm run watch in the project root)
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: compression
+      mountPath: /odata
+      configuration:
+        baseUri: "http://localhost:4004/odata"

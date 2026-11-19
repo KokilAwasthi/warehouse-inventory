@@ -1,0 +1,7 @@
+ProductID;Name;Category;Price;Currency;Stock;Description;ImageUrl
+HT-1000;Notebook Basic 15;Notebooks;956;EUR;25;"Notebook Basic 15 with 2.80 GHz quad core, 15-inch LCD, 4 GB DDR3 RAM, 500 GB hard disc.";images/HT-1000.svg
+HT-1001;Notebook Basic 17;Notebooks;1249;EUR;4;"Notebook Basic 17 with 2.80 GHz quad core, 17-inch LCD, 4 GB DDR3 RAM, 500 GB hard disc.";images/HT-1001.svg
+HT-1010;Notebook Professional 15;Notebooks;1999;EUR;0;"Notebook Professional 15 with 2.80 GHz quad core, 15-inch multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD.";images/HT-1010.svg
+HT-1030;Flat Future;Flat Screens;1230;EUR;12;"Optimum hi-resolution max. 1920 x 1080 @ 85Hz, dot pitch: 0.27mm.";images/HT-1030.svg
+HT-1055;Multi Print;Printers;99;EUR;58;Print 2400 dpi image quality color documents at speeds of up to 32 ppm.;images/HT-1055.svg
+HT-1063;Ergo Mouse;Accessories;14;EUR;3;Ergonomic optical mouse with wheel.;images/HT-1063.svg

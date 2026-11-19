@@ -1,0 +1,50 @@
+<mvc:View
+    controllerName="com.mycompany.fioriapp.controller.Detail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page
+        id="detailPage"
+        title="{i18n>detailTitle}"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <content>
+            <ObjectHeader
+                title="{Name}"
+                icon="{ path: 'ImageUrl', formatter: '.formatter.imageUrl' }"
+                iconAlt="{Name}"
+                iconDensityAware="false"
+                number="{
+                    parts: ['Price', 'Currency'],
+                    type: 'sap.ui.model.type.Currency',
+                    formatOptions: { showMeasure: false }
+                }"
+                numberUnit="{Currency}"
+                responsive="true">
+                <statuses>
+                    <ObjectStatus
+                        text="{ path: 'Stock', formatter: '.formatter.stockText' }"
+                        state="{ path: 'Stock', formatter: '.formatter.stockState' }" />
+                </statuses>
+            </ObjectHeader>
+            <f:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                labelSpanL="3"
+                labelSpanM="3"
+                columnsL="1"
+                columnsM="1">
+                <f:content>
+                    <Label text="{i18n>lblProductId}" />
+                    <Text text="{ProductID}" />
+                    <Label text="{i18n>lblCategory}" />
+                    <Text text="{Category}" />
+                    <Label text="{i18n>lblStock}" />
+                    <Text text="{Stock}" />
+                    <Label text="{i18n>lblDescription}" />
+                    <Text text="{Description}" />
+                </f:content>
+            </f:SimpleForm>
+        </content>
+    </Page>
+</mvc:View>
