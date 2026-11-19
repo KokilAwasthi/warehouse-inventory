@@ -6,3 +6,4 @@ resources/
 mta_archives/
 .mta/
 Makefile_*.mta
+abap/

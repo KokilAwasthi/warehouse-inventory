@@ -6,7 +6,6 @@ A small end-to-end SAP BTP sample:
 - **SAP CAP service** (Node.js, OData V4): read-only `Products` entity at `/odata/v4/inventory`.
 - **SAP HANA Cloud** database (HDI container) in the cloud, SQLite/in-memory locally.
 - **MTA deployment** to SAP BTP Cloud Foundry, with a standalone approuter, XSUAA login and the HTML5 Application Repository.
-- An **ABAP Cloud** "Hello World" class for the BTP ABAP Environment ([abap/](abap/)).
 
 ## Architecture
 
@@ -27,7 +26,6 @@ Browser ──► Approuter (XSUAA login) ──► HTML5 App Repository (Fiori 
 | `app/router/` | Standalone approuter for Cloud Foundry |
 | `mta.yaml` | Multi-target application descriptor (all modules and BTP services) |
 | `xs-security.json` | XSUAA security configuration |
-| `abap/` | ABAP Cloud console class `ZCL_HELLO_WORLD_KAW` |
 | `Fiori-App-Local-to-BTP-Trial.docx` | Step-by-step guide from local run to BTP deployment |
 
 ## Run locally
@@ -76,11 +74,3 @@ The deployment creates these services: HDI container, XSUAA, destination (lite),
 ## Check the data in HANA
 
 In the BTP cockpit, open **SAP HANA Cloud → Actions → Open in SAP HANA Database Explorer**. Add the HDI container `warehouse-inventory-db` and open the table `COM_MYCOMPANY_WAREHOUSE_PRODUCTS`.
-
-## ABAP Hello World
-
-`abap/zcl_hello_world_kaw.clas.abap` is meant for the BTP ABAP Environment, using ABAP Development Tools (ADT) in Eclipse:
-
-1. Create the package `ZHELLO_WORLD_KAW` under `ZLOCAL`.
-2. Create the class `ZCL_HELLO_WORLD_KAW` and paste in the code.
-3. Activate it and run it with **F9**. The console shows "Hello World!" and the server time.
